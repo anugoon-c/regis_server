@@ -18,5 +18,5 @@ res.json(results)   // สร้างผลลัพธ์เป็น JSON ส
 })
 })
 app.listen('3000',() => {     // 
-console.log('start port 3000')  
+console.log('Server running on port 3000')  
 })
