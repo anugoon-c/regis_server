@@ -7,37 +7,22 @@ const passport      = require('passport'),
 // Mock Data
 const user = {
   id: 1,
-  sub: 'nottdev',
+  sub: 'nuttapong',
   email: 'nottdev@gmail.com'
 }
-
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-  }, 
-  (email, password, cb) => {        
-
-    //this one is typically a DB call.
-    if (email !== user.email) 
-      return cb(null, false, {message: 'Incorrect email or password.'})
-            
-    return cb(null, user, {message: 'Logged In Successfully'})
-  }
-));
 
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey   : 'your_jwt_secret'
     },
     (jwtPayload, cb) => {
-
       try {
         // find the user in db if needed
-        if(jwtPayload.id == user.id) {
-          return cb(null, user);
-        } else {
-          return cb(null, false);
-        }
+        // if(jwtPayload.sub == user.sub) {
+        //   return cb(null, user);
+        // } else {
+          return cb(null, jwtPayload);
+        // }
       } catch (error) {
         return cb(error, false);
       }

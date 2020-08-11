@@ -1,33 +1,77 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../connection/db');
-var authenticate = require("../middleware/authentication");
+var db = require('../configs/db');
 
 /* Select person depend on NAVYID */
-router.get('/:id', authenticate, function(req, res, next) {
-    try {
-        let sql = `SELECT * FROM person_copy WHERE NAVYID = ${req.params.id}`
-        let query = db.query(sql,(err,results) => {
-            console.log(`SELECT NAVYID : ${req.params.id}`)
-            res.json(results)
-        })
-    } catch (err) {
-        res.send('respond with a resource');
-    }
+router.get('/:id', function(req, res, next) {
+    let sql = `SELECT * FROM person_dev WHERE NAVYID = ${req.params.id}`
+    let query = db.query(sql,(err,results) => {
+        if(err) {
+            res.status(400).send('ไม่สามารถค้นหาข้อมูล');
+            throw err
+        }
+        results.length === 0 ? res.status(400).send('ไม่พบข้อมูลทหารในระบบ') : res.json(results);
+    })
 });
 
 /* Insert person */
-router.post('/create', function(req, res, next) {
-    try {
-        console.log(req.body)
-        res.sendStatus(200)
-    } catch (err) {
-        res.send('respond with a resource');
-    }
+router.post('/create', async function(req, res, next) {
+    let sql = 
+        `   INSERT INTO person_dev 
+            (   BATT, 
+                COMPANY, 
+                PLATOON,
+                PSEQ, 
+                YEARIN, 
+                NAME, 
+                SNAME, 
+                BIRTHDATE, 
+                ID8, 
+                ID13, 
+                ADDRESS, 
+                ADDRESS_MU, 
+                ADDRESS_SOIL, 
+                ADDRESS_ROAD, 
+                FATHER, 
+                FSNAME, 
+                MOTHER, 
+                MSNAME, 
+                HEIGHT, 
+                WIDTH
+            )
+            VALUES (
+                '${req.body.BATT}', 
+                '${req.body.COMPANY}', 
+                '${req.body.PLATOON}', 
+                '${req.body.PSEQ}',
+                '${req.body.YEARIN}', 
+                '${req.body.NAME}', 
+                '${req.body.SNAME}', 
+                '${req.body.BIRTHDATE}', 
+                '${req.body.ID8}', 
+                '${req.body.ID13}', 
+                '${req.body.ADDRESS}', 
+                '${req.body.ADDRESS_MU}', 
+                '${req.body.ADDRESS_SOIL}', 
+                '${req.body.ADDRESS_ROAD}', 
+                '${req.body.FATHER}', 
+                '${req.body.FSNAME}', 
+                '${req.body.MOTHER}', 
+                '${req.body.MSNAME}', 
+                '${req.body.HEIGHT}', 
+                '${req.body.WIDTH}'
+            );`
+    let query = db.query(sql,(err,results) => {
+        if(err) {
+            res.status(400).send('ไม่สามารถเพิ่มข้อมูลทหารได้');
+            throw err
+        }  
+        res.send('เพิ่มข้อมูลทหารสำเร็จ');
+    })
 });
 
 /* Update person */
-router.put('/update/:id', function(req, res, next) {
+router.put('/:id', function(req, res, next) {
     try {
         console.log(`UPDATE NAVYID : ${req.params.id}`)
         res.sendStatus(200)
@@ -37,13 +81,15 @@ router.put('/update/:id', function(req, res, next) {
 });
 
 /* Delete person */
-router.delete('/delete/:id', function(req, res, next) {
-    try {
-        console.log(`DELETE NAVYID : ${req.params.id}`)
-        res.sendStatus(200)
-    } catch (err) {
-        res.send('respond with a resource');
-    }
+router.delete('/:id', function(req, res, next) {
+    let sql = `DELETE FROM person_dev WHERE NAVYID = ${req.params.id}`
+    let query = db.query(sql,(err,results) => {
+        if(err) {
+            res.status(400).send('ไม่สามารถลบข้อมูลได้');
+            throw err
+        }
+        results.affectedRows === 0 ? res.status(400).send('ไม่พบข้อมูลทหารในระบบ') : res.send(`ลบข้อมูล NAVYID: ${req.params.id} เรียบร้อย`);
+    })
 });
 
 module.exports = router;
