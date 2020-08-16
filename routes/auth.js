@@ -10,6 +10,7 @@ const SECRET = 'ACDCBattlionRegisteration';
 /* Login user */
 router.post('/login', async function ( req, res, next ) {
   // Find username in DB and get password to compare
+  console.log(req.body.USERNAME, req.body.PASSWORD)
   let sql = ` SELECT * from user_dev WHERE USERNAME = '${req.body.USERNAME}';`;
   let query = db.query(sql,(err,results) => {
     if(err) {
@@ -24,7 +25,15 @@ router.post('/login', async function ( req, res, next ) {
         company: results[0].COMPANY, // กองร้อย
         yearin: results[0].YEARIN, // ผลัดปี
       };
-      res.status(200).send(jwt.sign(payload, SECRET, { expiresIn: '12h' }));
+      const jwtSigned = jwt.sign(payload, SECRET, { expiresIn: '12h' })
+      res.status(200).send({
+        token: jwtSigned,
+        affiliated: {
+          batt: results[0].BATT,
+          company: results[0].COMPANY,
+          yearin: results[0].YEARIN,
+        }
+      });
     } else {
       res.status(401).send('ไม่สามารถเข้าสู่ระบบได้');
     }

@@ -4,16 +4,9 @@ const passport      = require('passport'),
       JWTStrategy   = passportJWT.Strategy,
       LocalStrategy = require('passport-local').Strategy
 
-// Mock Data
-const user = {
-  id: 1,
-  sub: 'nuttapong',
-  email: 'nottdev@gmail.com'
-}
-
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey   : 'your_jwt_secret'
+        secretOrKey   : 'ACDCBattlionRegisteration'
     },
     (jwtPayload, cb) => {
       try {
@@ -21,9 +14,11 @@ passport.use(new JWTStrategy({
         // if(jwtPayload.sub == user.sub) {
         //   return cb(null, user);
         // } else {
+          console.log(jwtPayload);
           return cb(null, jwtPayload);
         // }
       } catch (error) {
+        console.log(error);
         return cb(error, false);
       }
     }

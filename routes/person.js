@@ -1,10 +1,38 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../configs/db');
+var jwtDecode = require('jwt-decode');
+
+router.get('/', function (req, res, next) {
+    let payload = jwtDecode(req.headers.authorization.slice(7))
+    let sql = `SELECT * FROM person_dev WHERE YEARIN = '${payload.yearin}' AND BATT = '${payload.batt}' AND COMPANY = '${payload.company}'`
+    let query = db.query(sql, (err, results) => {
+        if (err) {
+            res.status(400).send('ไม่สามารถค้นหาข้อมูล');
+            throw err
+        }
+        results.length === 0 ? res.status(400).send('ไม่พบข้อมูลทหารในระบบ') : res.json(results);
+    })
+});
 
 /* Select person depend on NAVYID */
-router.get('/:id', function(req, res, next) {
-    let sql = `SELECT * FROM person_dev WHERE NAVYID = ${req.params.id}`
+router.get('/:id', function (req, res, next) {
+    console.log(`SELECT NAVYID: ${req.params.id}`);
+    let sql =   `SELECT * 
+                FROM person_dev
+                INNER JOIN armtown
+                ON person_dev.ARMID = armtown.ARMID
+                INNER JOIN townname
+                ON person_dev.TOWNCODE = townname.TOWNCODE
+                INNER JOIN religion
+                ON person_dev.REGCODE = religion.REGCODE
+                INNER JOIN eductab
+                ON person_dev.EDUCODE1 = eductab.ECODE1 AND  person_dev.EDUCODE2 = eductab.ECODE2 
+                INNER JOIN occtab
+                ON person_dev.OCCCODE = occtab.OCCCODE
+                INNER JOIN skilltab
+                ON person_dev.SKILLCODE = skilltab.SKILLCODE
+                WHERE NAVYID = ${req.params.id}`
     let query = db.query(sql,(err,results) => {
         if(err) {
             res.status(400).send('ไม่สามารถค้นหาข้อมูล');
