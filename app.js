@@ -1,22 +1,40 @@
 const express = require('express') // เรียกใช้ Express
-const mysql = require('mysql') // เรียกใช้ mysql
-const db = mysql.createConnection({   // config ค่าการเชื่อมต่อฐานข้อมูล
-host     : '192.168.64.2', 
-user     : 'acdc',
-password : '1234',
-database : 'navdb'
-})
-db.connect() // เชื่อมต่อฐานข้อมูล
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var passport = require('passport');
+var cors = require("cors");
+
+require('./configs/passport');
+
+var upload = multer();
+
+var authRouter = require('./routes/auth');
+var personRouter = require('./routes/person');
+var provinceRouter = require('./routes/province');
+var educationRouter = require('./routes/education');
+var occupationRouter = require('./routes/occupation');
+var skillRouter = require('./routes/skill');
+var religionRouter = require('./routes/religion');
+
 const app = express() // สร้าง Object เก็บไว้ในตัวแปร app เพื่อนำไปใช้งาน
-// Select Data
-app.get('/nava',(req,res)=> {   // Router เวลาเรียกใช้งาน
-let sql = 'SELECT * FROM law'  // คำสั่ง sql
-let query = db.query(sql,(err,results) => { // สั่ง Query คำสั่ง sql
-if(err) throw err  // ดัก error
-console.log(results) // แสดงผล บน Console 
-res.json(results)   // สร้างผลลัพธ์เป็น JSON ส่งออกไปบน Browser
-})
-})
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(upload.array()); 
+app.use(express.static('public'));
+
+app.use('/api/auth', authRouter);
+app.use('/api/person', passport.authenticate('jwt', {session: false}), personRouter);
+app.use('/api/province', passport.authenticate('jwt', {session: false}), provinceRouter);
+// app.use('/api/person', personRouter);
+// app.use('/api/province', provinceRouter);
+app.use('/api/education', passport.authenticate('jwt', {session: false}), educationRouter);
+app.use('/api/occupation', passport.authenticate('jwt', {session: false}), occupationRouter);
+app.use('/api/skill', passport.authenticate('jwt', {session: false}), skillRouter);
+app.use('/api/religion', passport.authenticate('jwt', {session: false}), religionRouter);
+
 app.listen('3000',() => {     // 
 console.log('Server running on port 3000')  
 })
+
