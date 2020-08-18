@@ -34,6 +34,7 @@ app.use('/api/occupation', passport.authenticate('jwt', {session: false}), occup
 app.use('/api/skill', passport.authenticate('jwt', {session: false}), skillRouter);
 app.use('/api/religion', passport.authenticate('jwt', {session: false}), religionRouter);
 
-app.listen('3000',() => {
-    console.log('start port 3000')  
+app.listen('3000',() => {     // 
+console.log('Server running on port 3000')  
 })
+
