@@ -25,14 +25,18 @@ app.use(upload.array());
 app.use(express.static('public'));
 
 app.use('/api/auth', authRouter);
-app.use('/api/person', passport.authenticate('jwt', {session: false}), personRouter);
-app.use('/api/province', passport.authenticate('jwt', {session: false}), provinceRouter);
-// app.use('/api/person', personRouter);
-// app.use('/api/province', provinceRouter);
-app.use('/api/education', passport.authenticate('jwt', {session: false}), educationRouter);
-app.use('/api/occupation', passport.authenticate('jwt', {session: false}), occupationRouter);
-app.use('/api/skill', passport.authenticate('jwt', {session: false}), skillRouter);
-app.use('/api/religion', passport.authenticate('jwt', {session: false}), religionRouter);
+app.use('/api/person', personRouter);
+app.use('/api/province', provinceRouter);
+app.use("/api/education", educationRouter);
+app.use("/api/occupation", occupationRouter);
+app.use("/api/skill", skillRouter);
+app.use("/api/religion", religionRouter);
+// app.use('/api/person', passport.authenticate('jwt', {session: false}), personRouter);
+// app.use('/api/province', passport.authenticate('jwt', {session: false}), provinceRouter);
+// app.use('/api/education', passport.authenticate('jwt', {session: false}), educationRouter);
+// app.use('/api/occupation', passport.authenticate('jwt', {session: false}), occupationRouter);
+// app.use('/api/skill', passport.authenticate('jwt', {session: false}), skillRouter);
+// app.use('/api/religion', passport.authenticate('jwt', {session: false}), religionRouter);
 
 app.listen('3000',() => {     // 
 console.log('Server running on port 3000')  

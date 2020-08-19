@@ -1,6 +1,6 @@
 var mysql = require('mysql');
 var connection = mysql.createConnection({
-    host     : '192.168.0.181', 
+    host     : 'localhost', 
     user     : 'acdc',
     password : '1234',
     database : 'navdb'
